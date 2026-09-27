@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tarot Table</title>
+<meta name="description" content="A cute, simple tarot reading table. Draw cards for yourself or friends, in English or Chinese.">
+<meta property="og:title" content="Tarot Table">
+<meta property="og:description" content="Draw a card, talk it through. A cute, simple tarot reading site.">
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🃏</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Chiron+GoRound+TC:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --soft:#F4F4F4; --ink:#111111; --muted:#777777; --line:#111111;
+  --font:"Nunito","Chiron GoRound TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#111111;--soft:#1E1E1E;--ink:#F5F5F5;--muted:#9A9A9A;--line:#F5F5F5}
+}
+:root[data-theme="dark"]{--bg:#111111;--soft:#1E1E1E;--ink:#F5F5F5;--muted:#9A9A9A;--line:#F5F5F5}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.75}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px dashed var(--ink);outline-offset:3px}
+.wrap{max-width:880px;margin:0 auto;padding:24px 20px 60px}
+[hidden]{display:none!important}
+
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.brand{font-weight:800;font-size:18px;background:none;border:0;padding:0;cursor:pointer}
+.brand::before{content:"✦ "}
+.stepper{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+.stepper li{width:10px;height:10px;border-radius:50%;border:2px solid var(--line);font-size:0}
+.stepper li[aria-current="step"]{background:var(--ink)}
+
+.hero{display:grid;grid-template-columns:1fr 240px;gap:32px;align-items:center}
+h1{font-weight:800;font-size:clamp(34px,7vw,52px);line-height:1.2;margin:0 0 8px}
+.lede{color:var(--muted);margin:0 0 26px}
+.field{display:block;margin-bottom:16px}
+.field > span{display:block;font-weight:600;margin-bottom:6px;font-size:15px}
+.field input,.field textarea{width:100%;background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:10px 14px;line-height:1.6}
+.field textarea{min-height:80px;resize:vertical}
+.field input:focus,.field textarea:focus{outline:none;box-shadow:3px 3px 0 var(--line)}
+fieldset{border:0;padding:0;margin:0 0 16px}
+legend{font-weight:600;margin-bottom:8px;padding:0;font-size:15px}
+.spreads{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.spreads label{display:block;cursor:pointer;border:2px solid var(--line);padding:12px 14px;border-radius:16px;line-height:1.4;transition:transform .12s}
+.spreads input{position:absolute;opacity:0;pointer-events:none}
+.spreads b{display:block;font-size:16px;font-weight:800;margin-bottom:2px}
+.spreads small{color:var(--muted);font-size:13px}
+.spreads label:has(input:checked){background:var(--ink);color:var(--bg)}
+.spreads label:has(input:checked) small{color:inherit;opacity:.75}
+.spreads label:has(input:focus-visible){outline:3px dashed var(--ink);outline-offset:3px}
+.topics{display:flex;flex-wrap:wrap;gap:8px}
+.topics label{cursor:pointer;border:2px solid var(--line);border-radius:999px;padding:5px 14px;font-weight:600;font-size:15px}
+.topics input{position:absolute;opacity:0;pointer-events:none}
+.topics label:has(input:checked){background:var(--ink);color:var(--bg)}
+.topics label:has(input:focus-visible){outline:3px dashed var(--ink);outline-offset:3px}
+.entry .topic{margin-top:8px;padding-top:8px;border-top:2px dotted var(--line)}
+.entry .topic b{font-weight:800}
+.note{max-width:40em;color:var(--muted);font-size:14px;margin:0 0 12px}
+.check{display:flex;align-items:center;gap:10px;font-size:15px;margin-bottom:24px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--line);background:var(--bg);padding:9px 18px;border-radius:999px;cursor:pointer;font-size:15px;font-weight:600;line-height:1.3;box-shadow:3px 3px 0 var(--line);transition:transform .1s,box-shadow .1s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--line)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.btn.primary{background:var(--ink);color:var(--bg);font-size:18px;padding:12px 34px;font-weight:800}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 var(--line)}
+
+.deckstage{display:flex;justify-content:center;align-items:center;min-height:300px}
+.stack{position:relative;width:150px;height:240px}
+.stack .card{--cw:150px;position:absolute;inset:0}
+.stack .card:nth-child(1){transform:rotate(-10deg) translate(-22px,6px)}
+.stack .card:nth-child(2){transform:rotate(8deg) translate(20px,-2px)}
+.stack .card:nth-child(3){transform:rotate(-1deg)}
+.stack.shuffling .card:nth-child(1){animation:riffleL .45s ease-in-out 3}
+.stack.shuffling .card:nth-child(2){animation:riffleR .45s ease-in-out 3}
+@keyframes riffleL{50%{transform:rotate(-18deg) translate(-90px,-10px)}}
+@keyframes riffleR{50%{transform:rotate(16deg) translate(90px,-10px)}}
+
+.card{--cw:90px;width:var(--cw);height:calc(var(--cw)*1.6);perspective:900px;font-size:calc(var(--cw)*.14);flex:none}
+.card-in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.3,.7,.2,1.2)}
+.card.flipped .card-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:calc(var(--cw)*.14);overflow:hidden;border:max(2px,calc(var(--cw)*.025)) solid #111;background:#FFF;color:#111}
+.back{background:radial-gradient(circle,#111 0 18%,transparent 19%) 0 0/calc(var(--cw)*.2) calc(var(--cw)*.2),#FFF;display:flex;align-items:center;justify-content:center}
+.back::after{content:"✦";display:grid;place-items:center;width:42%;aspect-ratio:1;border-radius:50%;background:#FFF;border:max(2px,calc(var(--cw)*.025)) solid #111;font-size:1.6em;line-height:1}
+.front{transform:rotateY(180deg)}
+.front-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10% 6% 9%}
+.front-in.rev{transform:rotate(180deg)}
+.num{font-weight:800;font-size:.9em;line-height:1}
+.emblem{flex:1;display:flex;align-items:center;justify-content:center;width:100%}
+.emblem svg{height:70%;max-height:calc(var(--cw)*.85);width:auto}
+.emblem .glyph{font-weight:800;font-size:2.6em;line-height:1;display:grid;place-items:center;width:1.7em;height:1.7em;border-radius:50%;border:max(2px,calc(var(--cw)*.025)) solid #111}
+.nm{font-weight:800;font-size:.85em;line-height:1.1;text-align:center;background:#111;color:#FFF;padding:.35em .7em;border-radius:1em;max-width:100%}
+.en .nm{font-size:.62em;padding:.4em .6em}
+.en .emblem .glyph{font-size:2.3em}
+
+.pickhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px}
+h2{font-weight:800;font-size:clamp(24px,4.5vw,32px);line-height:1.3;margin:0}
+.counter{font-weight:800;font-size:20px}
+.hint{color:var(--muted);font-size:14px;margin:4px 0 16px}
+.fan{display:flex;overflow-x:auto;padding:34px 20px 22px 58px;background:var(--soft);border-radius:24px}
+.fan .pick{--cw:74px;margin-left:-48px;background:none;border:0;padding:0;cursor:pointer;transition:transform .18s cubic-bezier(.3,.7,.2,1.4),opacity .3s,margin .3s,width .3s}
+.fan .pick:hover,.fan .pick:focus-visible{transform:translateY(-20px) rotate(-3deg)}
+.fan .pick.taken{opacity:0;width:0;margin-left:0;pointer-events:none}
+.tray{display:flex;gap:8px;margin:18px 0 0;flex-wrap:wrap}
+.tray span{width:22px;height:22px;border:2px dashed var(--line);border-radius:50%}
+.tray span.on{border-style:solid;background:var(--ink)}
+
+.question{margin:4px 0 0;color:var(--muted)}
+.question q{color:var(--ink)}
+.board{display:grid;justify-content:center;gap:14px 12px;margin:22px 0;padding:28px 12px;background:var(--soft);border-radius:24px}
+.board.single{--cw:clamp(120px,34vw,160px)}
+.board.three{--cw:clamp(84px,25vw,130px);grid-template-columns:repeat(3,auto);gap:14px clamp(12px,4vw,36px)}
+.board.celtic{--cw:clamp(52px,14vw,86px);grid-template-columns:repeat(3,auto) calc(var(--cw)*.3) auto;
+  grid-template-areas:". p3 . . p10" "p5 p1 p6 . p9" ". p4 . . p8" ". . . . p7";gap:10px 8px}
+.slot{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.slot .card{--cw:inherit;background:none;border:0;padding:0;cursor:pointer}
+.board .card{width:var(--cw);height:calc(var(--cw)*1.6)}
+.slot .lbl{font-size:13px;text-align:center;line-height:1.3;max-width:calc(var(--cw) + 30px)}
+.slot .lbl b{display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--ink);color:var(--bg);font-size:.85em;margin-right:4px}
+.slot.cross{position:absolute;inset:0;z-index:2;pointer-events:none;justify-content:flex-start}
+.slot.cross .card{transform:rotate(90deg);pointer-events:auto}
+.slot.cross .lbl{display:none}
+.center-cell{position:relative;grid-area:p1}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px}
+.reading{display:grid;gap:12px;max-width:40em}
+.entry{border:2px solid var(--line);border-radius:18px;padding:16px 18px}
+.entry h3{font-size:20px;margin:2px 0 0;line-height:1.35;font-weight:800}
+.entry .pos{display:inline-block;font-size:13px;font-weight:600;background:var(--ink);color:var(--bg);border-radius:999px;padding:1px 10px}
+.entry .orient{font-size:14px;color:var(--muted);margin-left:8px;font-weight:400}
+.entry .kw{margin:4px 0 2px;font-weight:600;font-size:15px}
+.entry p{margin:0}
+.empty{color:var(--muted);text-align:center;border:2px dashed var(--line);border-radius:18px;padding:20px;margin:0}
+.ai{max-width:40em;margin:0 0 30px;padding:18px 20px;border:2px solid var(--line);border-radius:18px;box-shadow:4px 4px 0 var(--line)}
+.ai h3{font-size:20px;margin:0 0 8px;font-weight:800}
+.ai h3::before{content:"✦ "}
+.ai p{margin:0 0 .9em}
+.ai .status{color:var(--muted);font-size:15px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 18px;border-radius:999px;font-size:15px;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+.foot{margin-top:48px;font-size:13px;color:var(--muted);text-align:center}
+
+@media (max-width:700px){
+  .hero{grid-template-columns:1fr}
+  .deckstage{order:-1;min-height:220px}
+  .stack{width:120px;height:192px}
+  .stack .card{--cw:120px}
+  .spreads{grid-template-columns:1fr}
+  .board.celtic{grid-template-columns:repeat(3,auto) 6px auto;gap:8px 5px}
+  .slot .lbl{font-size:11.5px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.top-r{display:flex;align-items:center;gap:14px}
+.lang{display:flex;border:2px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:var(--bg);border:0;padding:3px 12px;font-size:14px;font-weight:700;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.board.noanim .card-in{transition:none}
+.quiz{max-width:640px;margin:0 auto;text-align:center}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.qdots{display:flex;gap:6px}
+.qdots span{width:26px;height:8px;border-radius:99px;border:2px solid var(--line)}
+.qdots span.on{background:var(--ink)}
+.linkbtn{background:none;border:0;padding:4px 2px;font-weight:600;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:hover{color:var(--ink)}
+.quiz h2{margin-bottom:4px}
+.quiz .hint{margin-bottom:20px}
+.quiz .field{max-width:320px;margin:0 auto 22px;text-align:left}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:12px;margin-bottom:20px}
+.opt{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--bg);border:2px solid var(--line);border-radius:22px;padding:16px 8px 12px;cursor:pointer;font-weight:700;font-size:15px;line-height:1.3;position:relative;transition:transform .15s cubic-bezier(.3,.7,.2,1.5),box-shadow .15s}
+.opt:hover{transform:translateY(-3px) rotate(-1deg);box-shadow:3px 3px 0 var(--line)}
+.opt .ic{width:84px;height:84px;border-radius:50%;background:#FFF;display:grid;place-items:center;border:2px solid #111}
+.opt .ic svg{width:76px;height:76px}
+.opt[aria-pressed="true"]{box-shadow:4px 4px 0 var(--line);transform:translateY(-3px)}
+.opt[aria-pressed="true"]::after{content:"✓";position:absolute;top:8px;right:10px;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:13px;display:grid;place-items:center}
+.opt:active{transform:scale(.96)}
+.hello{display:inline-flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:999px;padding:4px 14px 4px 4px;margin-bottom:14px;font-weight:700}
+.hello .ic,.profile .ic{width:36px;height:36px;border-radius:50%;background:#FFF;border:2px solid #111;display:grid;place-items:center;flex:none}
+.hello .ic svg,.profile .ic svg{width:30px;height:30px}
+.profile{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 0}
+.profile .tag{border:2px solid var(--line);border-radius:999px;padding:0 10px;font-size:13px;font-weight:600}
+.moodmsg{max-width:40em;margin:14px 0 0;padding:10px 16px;border-radius:16px;background:var(--soft);font-weight:600}
+@media (prefers-reduced-motion:reduce){.opt:hover,.opt[aria-pressed="true"]{transform:none}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <button class="brand" id="home" data-i="brand"></button>
+    <div class="top-r">
+      <ol class="stepper" id="stepper" aria-hidden="true">
+        <li data-s="intro"></li><li data-s="setup"></li><li data-s="pick"></li><li data-s="read"></li>
+      </ol>
+      <div class="lang" role="group" aria-label="Language / 語言">
+        <button data-lang="en" lang="en">EN</button>
+        <button data-lang="zh" lang="zh-Hant">中文</button>
+      </div>
+    </div>
+  </header>
+
+  <section id="intro">
+    <div class="quiz">
+      <div class="quiz-top"><div class="qdots" id="qdots" aria-hidden="true"></div><button class="linkbtn" id="skipBtn" data-i="skip"></button></div>
+      <h2 id="qTitle"></h2>
+      <p class="hint" id="qSub"></p>
+      <label class="field" id="nameWrap"><span data-i="nameLabel"></span><input id="qName" maxlength="30"></label>
+      <div class="opts" id="opts" role="group"></div>
+      <button class="linkbtn" id="backBtn" data-i="back"></button>
+    </div>
+  </section>
+
+  <section id="setup" hidden>
+    <div class="hero">
+      <div>
+        <div class="hello" id="hello"></div>
+        <h1 id="h1"></h1>
+        <p class="lede" data-i="lede"></p>
+        <fieldset>
+          <legend data-i="topicLegend"></legend>
+          <div class="topics" id="topics"></div>
+        </fieldset>
+                <label class="field"><span data-i="qLabel"></span><textarea id="qText" maxlength="300"></textarea></label>
+        <fieldset>
+          <legend data-i="spreadLegend"></legend>
+          <div class="spreads">
+            <label><input type="radio" name="spread" value="single"><b id="sp-single"></b><small id="spd-single"></small></label>
+            <label><input type="radio" name="spread" value="three" checked><b id="sp-three"></b><small id="spd-three"></small></label>
+            <label><input type="radio" name="spread" value="celtic"><b id="sp-celtic"></b><small id="spd-celtic"></small></label>
+          </div>
+        </fieldset>
+        <label class="check"><input type="checkbox" id="qRev" checked><span data-i="revLabel"></span></label>
+        <button class="btn primary" id="shuffleBtn" data-i="shuffle"></button>
+      </div>
+      <div class="deckstage" aria-hidden="true"><div class="stack" id="stack"></div></div>
+    </div>
+  </section>
+
+  <section id="pick" hidden>
+    <div class="pickhead">
+      <h2 id="pickTitle"></h2>
+      <span class="counter" id="counter"></span>
+    </div>
+    <p class="hint" data-i="hint"></p>
+    <div class="fan" id="fan" role="group"></div>
+    <div class="tray" id="tray" aria-hidden="true"></div>
+  </section>
+
+  <section id="read" hidden>
+    <h2 id="readTitle"></h2>
+    <p class="question" id="readQ"></p>
+    <div class="profile" id="profile"></div>
+    <p class="moodmsg" id="moodMsg" hidden></p>
+    <div class="board" id="board"></div>
+    <div class="actions">
+      <button class="btn" id="flipAll" data-i="flipAll"></button>
+      <button class="btn" id="copyBtn" data-i="copy"></button>
+      <button class="btn" id="againBtn" data-i="again"></button>
+    </div>
+    <div class="ai" id="sumBox" hidden>
+      <h3 data-i="aiTitle"></h3>
+      <div id="sumOut"></div>
+    </div>
+    <p class="note" id="healthNote" hidden data-i="healthNote"></p>
+    <div class="reading" id="reading"></div>
+  </section>
+
+  <p class="foot" data-i="foot"></p>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const ZH_MAJORS = `愚者|The Fool|新開始、冒險、自由|帶著好奇心踏出第一步，不必想得太周全。|魯莽、猶豫、逃避責任|衝動或害怕都讓你停在原地，先看清腳下。
+魔術師|The Magician|行動力、資源、創造|你手上的工具已經足夠，是時候動手。|欺瞞、分心、能力未發揮|注意言過其實，或把力氣用錯地方。
+女祭司|The High Priestess|直覺、潛意識、靜觀|答案在內心，安靜下來聽自己的聲音。|忽視直覺、秘密、混亂|你可能在壓抑內在感受，或有話沒被說出口。
+皇后|The Empress|豐盛、滋養、感官|耐心照顧的事物正在開花結果。|過度付出、停滯、忽略自己|付出太多，而忘了照顧自己。
+皇帝|The Emperor|秩序、權威、穩定|建立結構與規則，能讓局面穩住。|控制、僵化、濫用權力|掌控得太緊，反而讓事情卡住。
+教皇|The Hierophant|傳統、學習、指引|向有經驗的人或既有體制求教。|打破常規、教條、叛逆|你開始質疑規則，想走自己的路。
+戀人|The Lovers|愛、結合、價值選擇|一個與真心相符的選擇擺在眼前。|失衡、猶豫、價值衝突|關係或抉擇中，彼此的期待不一致。
+戰車|The Chariot|意志、前進、勝利|專注目標，靠決心駕馭矛盾的力量。|失控、方向不明、受阻|力氣四散，需要重新確認方向。
+力量|Strength|勇氣、耐心、溫柔的堅定|以柔克剛，溫和而堅定就能化解難題。|自我懷疑、軟弱、情緒失控|內在力量被恐懼蓋過了，先善待自己。
+隱者|The Hermit|內省、獨處、尋找答案|暫時退後一步，獨處能帶來洞見。|孤立、封閉、逃避|獨處過了頭，變成與人隔絕。
+命運之輪|Wheel of Fortune|轉機、循環、時機|局勢正在轉動，順勢而為。|不順、抗拒改變、停滯|事情不如預期，但輪子終究會再轉。
+正義|Justice|公平、真相、因果|誠實面對，事情會得到公正的結果。|不公、逃避責任、偏頗|有些事被扭曲，或你不願承認自己的部分。
+倒吊人|The Hanged Man|等待、換個角度、放下|暫停下來，換個視角會看到新可能。|拖延、無謂犧牲、抗拒|困在原地，卻不肯鬆手。
+死神|Death|結束、轉化、新生|一個階段結束，為新的開始騰出空間。|抗拒結束、停滯、害怕改變|緊抓著已經過去的東西不放。
+節制|Temperance|平衡、調和、耐心|找到中間的路，慢慢調和。|失衡、過度、急躁|某方面用力過猛，需要調整節奏。
+惡魔|The Devil|束縛、慾望、執著|看清是什麼綁住了你，往往是自己解得開的鎖。|掙脫、覺醒、擺脫依賴|你正在意識到束縛，開始鬆綁。
+高塔|The Tower|突變、崩解、真相|不穩的基礎被打破，真相浮上檯面。|延遲的變動、內在動盪|變動被壓著，但遲早要面對。
+星星|The Star|希望、療癒、靈感|風暴過後，信心與方向慢慢回來。|失望、失去信心、疏離|暫時看不到光，但希望沒有消失。
+月亮|The Moon|不安、迷霧、潛意識|事情還不明朗，別急著下定論。|釐清、恐懼消散、真相浮現|迷霧漸散，看清原本誤解的地方。
+太陽|The Sun|成功、喜悅、活力|事情明朗而順利，放心享受。|暫時的陰霾、過度樂觀、延遲|好事仍在，只是來得慢一點。
+審判|Judgement|覺醒、召喚、重生|回顧過去，做出清醒的決定。|自我批判、猶豫、錯過時機|對自己太嚴苛，或不敢回應內心的聲音。
+世界|The World|完成、圓滿、整合|一個循環圓滿落幕，值得慶祝。|未完成、缺一角、延遲|就差最後一步，別在終點前停下。`;
+const ZH_MINORS = {
+wands:`新靈感、熱情、開創|一股想做點什麼的衝勁正在點燃。|延誤、缺乏動力、方向不明|熱情還沒找到出口。
+規劃、遠見、抉擇|站在起點看遠方，開始計畫下一步。|害怕未知、計畫不周|猶豫讓你一直待在安全區。
+拓展、等待成果、視野|已經出發了，成果正在路上。|受阻、延遲、眼界受限|進展比預期慢，需要調整期待。
+慶祝、安定、歸屬|值得慶祝的里程碑，感受團聚的溫暖。|不安定、過渡期、不和諧|表面熱鬧，底下還有沒解決的事。
+競爭、衝突、磨合|意見紛雜，是摩擦也是成長。|避免衝突、內耗、和解|衝突轉向內部，或終於願意停戰。
+勝利、肯定、自信|努力被看見，好好接受掌聲。|自負、失去肯定、落差|太在意別人的評價。
+堅守立場、防衛、挑戰|站穩你的位置，這值得捍衛。|疲於應付、退讓、不堪負荷|撐得太累，開始想放棄。
+快速進展、消息、行動|事情加速推進，消息即將到來。|延誤、倉促、混亂|節奏亂了，慢下來反而更快。
+韌性、戒備、最後堅持|雖然疲憊，但只差一點了。|精疲力竭、多疑、放棄|防備心太重，身心都在透支。
+負擔、責任、壓力|你扛了太多，該分出去一些。|放下重擔、崩潰、委派|開始學著卸下不必要的責任。
+好奇、探索、好消息|帶著熱情嘗試新事物。|三分鐘熱度、壞消息、猶豫|興趣來得快，去得也快。
+冒險、衝勁、熱情|大膽追求，行動派的能量。|魯莽、急躁、半途而廢|衝太快，容易虎頭蛇尾。
+自信、魅力、獨立|散發溫暖而堅定的光芒。|嫉妒、自我懷疑、強勢|缺乏安全感時，容易變得咄咄逼人。
+領導、遠見、魄力|用願景帶著大家前進。|專斷、急躁、期待過高|要求太高，忽略了別人的步調。`,
+cups:`新感情、愛、情感豐沛|心打開了，新的情感正在流入。|情感壓抑、空虛、封閉|有些情緒還沒被好好接住。
+連結、夥伴、相互吸引|兩人之間有真誠的共鳴。|失和、誤解、關係失衡|互動中出現了不對等。
+友誼、慶祝、社群|和朋友分享喜悅。|過度放縱、八卦、疏離|社交帶來消耗，或小圈子出現摩擦。
+冷淡、沉思、錯過機會|對眼前提不起勁，但別忽略新的提議。|重新投入、接受機會|從倦怠中醒來，願意再試一次。
+失落、遺憾、悲傷|只盯著失去的，卻沒看到身後還在的。|釋懷、接受、走出傷痛|開始放下，轉身看見留下的東西。
+懷舊、純真、回憶|過去的人事物帶來溫暖。|活在過去、不願長大|太留戀過去，走不出去。
+幻想、選擇太多、白日夢|選項很多，但不是每一個都真實。|看清現實、做出決定|從幻想中回神，專注在一件事上。
+離開、尋找意義、放手|走開不是失敗，是去找更深的東西。|害怕改變、徘徊、逃避|想走又不敢走。
+滿足、願望達成、享受|心願成真，好好享受。|貪心、自滿、表面滿足|擁有了，卻還是覺得不夠。
+幸福、家庭、和諧|情感上的圓滿與歸屬。|家庭失和、理想落差|想像中的幸福和現實有距離。
+敏感、創意、情感訊息|一則溫柔的訊息或靈感出現。|情緒化、不成熟、逃避|情緒來得太快，還不知道怎麼處理。
+浪漫、追求、邀請|帶著真心行動，也許有告白或邀約。|不切實際、善變|甜言蜜語多，實際行動少。
+同理、溫柔、直覺|用包容與理解照顧身邊的人。|情緒依賴、過度敏感|吸收了太多別人的情緒。
+情緒成熟、穩重、包容|兼顧理性與感性，冷靜處理情緒。|情緒壓抑、操控、冷淡|表面平靜，底下暗潮洶湧。`,
+swords:`清晰、突破、真相|一個清楚的想法劃開迷霧。|混亂、誤判、思緒不清|資訊錯亂，容易下錯判斷。
+僵局、兩難、逃避|蒙著眼不肯選，但終究要選。|資訊過多、被迫抉擇|僵局鬆動，或壓力大到必須面對。
+心碎、痛苦、分離|痛是真的，允許自己難過。|復原、釋放痛苦|傷口開始癒合。
+休息、復原、沉澱|停下來休養，才能再出發。|焦躁、倦怠、無法休息|身體停了，心還停不下來。
+衝突、勝之不武、爭執|贏了爭論，卻可能輸了關係。|和解、放下、承認錯誤|願意收手，開始修補關係。
+過渡、離開、慢慢平靜|帶著傷，往更平靜的地方去。|抗拒離開、未解問題|想走，卻被舊事拉住。
+策略、隱瞞、單獨行動|需要智取，但要守住誠信。|坦白、被揭穿、良心不安|藏著的事浮上檯面。
+受困、自我設限、無力|束縛多半來自想法，鬆綁比想像容易。|解脫、新視角、重獲自由|開始看見出口。
+焦慮、失眠、恐懼|夜裡的擔憂被放大了，事情未必那麼糟。|走出焦慮、求助、釋懷|最深的恐懼開始退散。
+結束、谷底、痛苦終結|最糟的已經發生，接下來只會往上。|復原、倖存、慢慢站起|最壞的階段過去了。
+好奇、觀察、求知|保持警覺，多問多看。|八卦、說話傷人、草率|注意說出口的話。
+果斷、直言、急進|迅速行動，直搗核心。|衝動、無禮、不顧後果|太急太衝，容易傷到人。
+清醒、獨立、直率|以清晰的判斷看穿表象。|冷酷、刻薄、封閉|用理性築起了高牆。
+理性、權威、公正判斷|以邏輯與原則做決定。|操弄、專制、冷漠|聰明被用在控制別人。`,
+pentacles:`新機會、財富、實際的開始|一個實際可行的機會出現了。|錯失機會、計畫不周|機會來了，但準備不足。
+平衡、彈性、兼顧|在幾件事之間靈活調度。|分身乏術、失衡|手上的球太多，快接不住了。
+合作、專業、團隊|和人合作，能把事情做好。|缺乏配合、品質不佳|團隊裡各做各的。
+保守、守財、安全感|守住你擁有的。|過度控制、吝嗇|抓得太緊，反而會失去。
+困頓、匱乏、孤立|困境中別忘了求助，門其實開著。|復甦、得到幫助|最艱難的時候過去了。
+給予、分享、互惠|施與受之間取得平衡。|不對等、有條件的付出|幫助的背後帶著條件。
+耐心、評估、長期投資|成果需要時間，檢視目前的投入。|急躁、投入沒有回報|努力的方向可能需要調整。
+專注、精進、勤奮|踏實練功，技藝越來越好。|完美主義、倦怠、敷衍|重複讓你失去熱情。
+獨立、富足、自給自足|靠自己的努力享受成果。|過度工作、財務不穩|表面光鮮，內在不安。
+傳承、家族、長久的富足|穩固的基礎與長期的安穩。|家庭財務問題、傳承斷裂|金錢或家族責任帶來壓力。
+學習、踏實、新計畫|認真學一項實用的新技能。|拖延、缺乏專注|想法很多，執行太少。
+穩健、負責、持之以恆|慢慢來，但一定會到。|停滯、無聊、固執|穩到變成不動了。
+務實、照顧、富足|把生活和身邊的人照顧得很好。|忽略自己、過度操心|忙著照顧一切，忘了自己。
+成功、穩定、理財能力|可靠而有成就，懂得經營。|物質主義、固執、貪婪|太看重得失。`
+};
+const ZH_MAJOR_TOPIC = `享受心動，別急著定義關係|適合嘗試新方向或轉換跑道|小心衝動消費，先留預備金|多出去走走，但留意意外小傷|用輕鬆的心情和家人相處|敞開心胸認識新朋友
+主動表達，就有機會|能力到位，可以主動爭取|善用手邊資源創造收入|有能力調整作息，從今天開始|主動溝通能化解誤會|你的表達力很吸引人
+感情放在心裡，需要時間醞釀|先觀察局勢，不急著表態|理財保守，相信直覺但多查資料|留意身體細微的訊號|多聽聽家人沒說出口的話|保持適度距離，人際更自在
+甜蜜而被寵愛，關係穩定成長|工作有成果，適合發揮創意|財源穩定，可以適度享受|注意飲食與休息，好好寵自己|家庭溫暖，適合多陪伴|你的溫柔讓人想親近
+需要穩定的承諾，也別太強勢|適合建立制度，承擔領導責任|按計畫理財，紀律帶來安穩|規律作息是最好的保養|家裡需要有人扛起責任|立好界線，別人會更尊重你
+適合認真交往，或尋求長輩祝福|向前輩請教，按規矩來|選擇穩健、傳統的理財方式|聽從專業建議，定期檢查|尊重家中傳統與長輩意見|在團體中找到歸屬
+心動與吸引，面臨重要的感情選擇|有合作機會，或需要選擇方向|金錢決定要符合真正的價值觀|身心協調，留意感情對情緒的影響|家人之間需要真誠對話|遇到很合拍的人
+主動追求，掌握關係的主導權|目標明確，正是衝刺期|積極爭取收入，但要控制風險|體力充足，適合運動|帶頭解決家裡的問題|克服分歧，團結前進
+用耐心與溫柔經營關係|以柔克剛處理職場難題|穩紮穩打，克制衝動|身體有恢復力，也要照顧情緒|溫和包容能化解家中摩擦|真誠與耐心贏得信任
+需要獨處思考，感情暫時沉澱|適合進修、專研，不急著表現|低調儲蓄，減少不必要的支出|多休息、靜心，減少過度刺激|給彼此一點空間|少而精的朋友就足夠
+緣分轉動，可能有新相遇|局勢變化，機會出現|財運有起伏，把握時機|狀態隨作息變動，保持彈性|家中有變化，一起面對|人際圈正在洗牌
+關係需要公平與坦誠|會被公正評價，合約文件要看清楚|收支平衡，處理好合約或法律事務|身體反映生活方式，調整就會改善|家中事務需要公平處理|誠實待人，問心無愧
+感情暫停期，換個角度看對方|工作停滯，適合沉澱與學習|先別大筆投資，等待時機|放慢步調，給身體休息時間|為家人付出，也別失去自己|退一步，關係反而更順
+舊關係結束，或相處模式轉變|工作階段性結束，迎來新局|改掉舊的花錢習慣|戒掉不好的習慣，重新開始|家庭關係進入新階段|有些關係自然淡去，也有新的開始
+細水長流，彼此磨合|協調各方，穩定進展|收支平衡，量入為出|均衡飲食、適度運動|當家人之間的橋樑|和諧相處，溝通順暢
+強烈吸引，也要小心依賴或控制|被工作綁住，或受利益誘惑|小心欠債和衝動購物|留意成癮或不良習慣|家中有情緒糾結，需要鬆綁|小心讓你消耗的關係
+關係突然生變，真相浮現|突發變動，需要快速應變|注意意外支出|留意突發狀況，別硬撐|家中出現衝突，說開反而好|人際突變，看清誰是真朋友
+充滿希望，可以真誠地期待|前景看好，懷抱理想前進|財務逐漸好轉|身心正在恢復中|家人之間相互療癒|會遇到給你力量的人
+感情曖昧不明，別胡思亂想|資訊不明，別輕信傳言|小心詐騙與來路不明的投資|留意睡眠與情緒|家中有說不出口的心事|小心誤會與猜疑
+甜蜜開心，關係公開透明|表現亮眼，獲得肯定|財運順利|活力充沛，狀態很好|家庭和樂，適合一起出遊|很受歡迎，人緣很好
+舊情復燃，或重新評估這段關係|收到好消息，獲得新機會|重新檢視財務規劃|重新調整生活習慣|家中和解的好時機|修復舊關係的機會
+關係圓滿，可能有好結果|任務完成，達成目標|財務目標達成|身心平衡，狀態圓滿|家庭圓滿和樂|人脈廣闊，到處都有好朋友`.split('\n').map(l=>l.split('|'));
+const ZH_SUIT_TOPIC = {
+  wands:'感情靠熱情推動，重點在主動和吸引力|看行動力與企圖心，適合開創|收入跟著行動來，敢做就有機會|跟體力和活力有關，注意別過勞|家裡需要多一點熱情和活力|靠熱情帶動人際'.split('|'),
+  cups:'這是最直接的感情花色，重點在心意與感受|工作中的人際和成就感是關鍵|財務受情緒影響，別情緒性消費|跟情緒和心理狀態關係密切|重點在家人之間的情感交流|重點在情感連結與互相理解'.split('|'),
+  swords:'感情需要溝通和理性，也留意言語傷人|看判斷與策略，可能遇到競爭或挑戰|需要理性分析，避免因錢起衝突|留意壓力、焦慮和睡眠|家裡需要把話說清楚|溝通方式決定關係好壞'.split('|'),
+  pentacles:'感情重實際，看穩定度和長期規劃|跟實際成果、收入和專業累積有關|這是金錢花色，和財務直接相關|跟身體、飲食和作息有關|和家中的經濟與生活照顧有關|務實的互助與長久的交情'.split('|')
+};
+const EN_MAJORS = `new beginnings, adventure, freedom|Step forward with curiosity. You don't need the whole map yet.|recklessness, hesitation, avoidance|Impulse or fear is keeping you in place. Look before you leap.
+action, resources, creation|You already have the tools you need. Time to start.|deception, distraction, untapped skill|Watch for overpromising, or energy spent in the wrong place.
+intuition, the unconscious, stillness|The answer is within. Get quiet and listen to yourself.|ignored intuition, secrets, confusion|You may be pushing down what you feel, or something is going unsaid.
+abundance, nurturing, the senses|What you've patiently cared for is starting to bloom.|over-giving, stagnation, self-neglect|You're giving so much that you've forgotten yourself.
+structure, authority, stability|Clear rules and structure will steady things.|control, rigidity, misused power|Holding on too tightly is what's jamming things up.
+tradition, learning, guidance|Ask someone experienced, or lean on proven ways.|breaking convention, dogma, rebellion|You're questioning the rules and want your own path.
+love, union, values-based choice|A choice that matches your true heart is in front of you.|imbalance, indecision, clashing values|Expectations in a relationship or decision don't line up.
+willpower, momentum, victory|Focus on the goal and steer opposing forces with determination.|loss of control, no direction, blocks|Your energy is scattered. Reconfirm where you're heading.
+courage, patience, gentle strength|Soft but steady wins here. Kindness tames the hard thing.|self-doubt, weakness, emotional overwhelm|Fear is covering your inner strength. Be kind to yourself first.
+reflection, solitude, seeking truth|Step back for a while. Time alone will bring insight.|isolation, withdrawal, avoidance|Solitude has gone too far and turned into cutting yourself off.
+turning point, cycles, timing|Things are shifting. Go with the turn.|bad luck, resisting change, stuck|It's not going as hoped, but the wheel will turn again.
+fairness, truth, cause and effect|Be honest and things will land fairly.|injustice, dodging responsibility, bias|Something is being twisted, or you're not owning your part.
+pause, new perspective, letting go|Stop for a moment. A different angle reveals new options.|delay, pointless sacrifice, resistance|Stuck in place but unwilling to let go.
+endings, transformation, rebirth|A chapter closes to make room for something new.|resisting endings, stagnation, fear of change|Holding onto something that's already over.
+balance, harmony, patience|Find the middle path and blend things slowly.|imbalance, excess, impatience|You're pushing too hard somewhere. Adjust the pace.
+attachment, desire, feeling trapped|See what's tying you down. It's often a lock you can open yourself.|release, awakening, breaking free|You're noticing the chains and starting to loosen them.
+upheaval, collapse, revelation|A shaky foundation breaks and the truth comes out.|delayed change, inner turmoil|The change is being held back, but it will have to be faced.
+hope, healing, inspiration|After the storm, faith and direction slowly return.|disappointment, lost faith, disconnection|The light is hard to see right now, but hope hasn't gone.
+uncertainty, illusion, the unconscious|Things are still unclear. Don't jump to conclusions.|clarity, fear fading, truth surfacing|The fog is lifting and misunderstandings are clearing up.
+success, joy, vitality|Things are bright and going well. Enjoy it.|temporary clouds, overconfidence, delays|The good is still coming, just a little slower.
+awakening, calling, renewal|Look back honestly and make a clear-eyed decision.|self-judgment, hesitation, missed calling|You're too hard on yourself, or afraid to answer your inner voice.
+completion, fulfillment, integration|A cycle closes beautifully. Worth celebrating.|unfinished, missing piece, delay|One last step. Don't stop right before the finish line.`;
+
+const EN_MINORS = {
+wands:`new spark, passion, initiative|An urge to create something is catching fire.|delays, low drive, no direction|The passion hasn't found an outlet yet.
+planning, vision, decisions|Standing at the start, looking far ahead. Plan the next move.|fear of the unknown, poor planning|Hesitation is keeping you in the comfort zone.
+expansion, awaiting results, perspective|You've set out, and results are on the way.|setbacks, delays, narrow view|Progress is slower than hoped. Adjust expectations.
+celebration, stability, belonging|A milestone worth celebrating. Enjoy the togetherness.|instability, transition, disharmony|It looks festive, but something underneath is unresolved.
+competition, conflict, friction|Lots of clashing opinions. It's friction, but also growth.|avoiding conflict, inner struggle, truce|The fight turns inward, or everyone finally calls a truce.
+victory, recognition, confidence|Your effort is being seen. Accept the applause.|arrogance, lack of recognition|Caring too much about what others think.
+standing your ground, defense, challenge|Hold your position. It's worth defending.|exhaustion, giving in, overwhelm|Holding on is wearing you out.
+fast progress, news, action|Things are speeding up and news is on its way.|delays, haste, chaos|The rhythm is off. Slowing down will actually be faster.
+resilience, vigilance, last push|You're tired, but you're almost there.|burnout, suspicion, giving up|Too guarded, and running on empty.
+burden, responsibility, pressure|You're carrying too much. Share some of it.|putting it down, breakdown, delegating|Learning to drop what isn't yours to carry.
+curiosity, exploration, good news|Try something new with enthusiasm.|fleeting interest, bad news, hesitation|Excitement comes fast and fades fast.
+adventure, drive, passion|Chase it boldly. Pure go-getter energy.|recklessness, impatience, quitting halfway|Going too fast makes it easy to fizzle out.
+confidence, charm, independence|You're radiating warm, steady light.|jealousy, self-doubt, domineering|Insecurity can make you come on too strong.
+leadership, vision, boldness|Lead others forward with a clear vision.|bossy, impatient, expectations too high|Demanding too much and ignoring others' pace.`,
+cups:`new feelings, love, emotional abundance|Your heart is opening and new feelings are flowing in.|suppressed emotions, emptiness, closed off|Some feelings haven't been properly held yet.
+connection, partnership, attraction|There's a real resonance between two people.|discord, misunderstanding, imbalance|The give and take has become uneven.
+friendship, celebration, community|Share the joy with friends.|overindulgence, gossip, distance|Socializing is draining, or a friend group has friction.
+apathy, contemplation, missed chances|Nothing excites you right now, but don't ignore a new offer.|re-engaging, accepting opportunity|Waking up from the slump and willing to try again.
+loss, regret, grief|Focused on what's lost, you miss what's still standing behind you.|acceptance, moving on, healing|Starting to let go and turning toward what remains.
+nostalgia, innocence, memories|People and things from the past bring warmth.|living in the past, not growing up|Holding onto the past is stopping you from moving forward.
+fantasy, too many choices, daydreams|Lots of options, but not all of them are real.|seeing clearly, making a choice|Coming back to reality and focusing on one thing.
+walking away, seeking meaning, letting go|Leaving isn't failure. It's going to find something deeper.|fear of change, drifting, avoidance|Wanting to leave but not daring to.
+satisfaction, wishes granted, enjoyment|A wish comes true. Enjoy it.|greed, complacency, hollow satisfaction|You have it, but it still doesn't feel like enough.
+happiness, family, harmony|Emotional fulfillment and a sense of home.|family discord, broken ideals|The happiness you imagined doesn't match reality.
+sensitivity, creativity, sweet news|A tender message or bit of inspiration appears.|moodiness, immaturity, escapism|Feelings arrive faster than you know how to handle.
+romance, pursuit, invitation|Acting from the heart. Maybe a confession or an invitation.|unrealistic, fickle|Lots of sweet words, not much follow-through.
+empathy, gentleness, intuition|Caring for others with understanding and acceptance.|emotional dependence, oversensitivity|You've absorbed too much of other people's feelings.
+emotional maturity, calm, acceptance|Balancing head and heart, handling feelings calmly.|repression, manipulation, coldness|Calm on the surface, stormy underneath.`,
+swords:`clarity, breakthrough, truth|A clear idea cuts through the fog.|confusion, misjudgment, cloudy thinking|Mixed-up information makes it easy to misjudge.
+stalemate, dilemma, avoidance|Refusing to choose with a blindfold on, but a choice must come.|information overload, forced decision|The stalemate loosens, or pressure forces your hand.
+heartbreak, pain, separation|The hurt is real. Let yourself be sad.|recovery, releasing pain|The wound is starting to heal.
+rest, recovery, reflection|Pause and recover so you can go again.|restlessness, burnout, can't rest|Your body has stopped, but your mind hasn't.
+conflict, hollow victory, arguments|You might win the argument but lose the relationship.|reconciliation, letting go, admitting fault|Ready to back down and start repairing.
+transition, leaving, calmer waters|Carrying the hurt toward somewhere calmer.|resisting departure, unresolved issues|You want to go, but old issues keep pulling you back.
+strategy, secrecy, going it alone|You'll need to be clever, but keep your integrity.|confession, getting caught, guilty conscience|What was hidden is coming to light.
+trapped, self-limiting, powerless|The ropes are mostly in your head. Getting free is easier than you think.|release, new perspective, freedom|You're starting to see the way out.
+anxiety, sleeplessness, fear|Nighttime worries blow things up. It may not be that bad.|easing anxiety, reaching out, relief|The deepest fears are starting to fade.
+ending, rock bottom, pain is over|The worst has already happened. It's only up from here.|recovery, survival, getting back up|The hardest stretch is behind you.
+curiosity, observation, eager to learn|Stay alert. Ask more, watch more.|gossip, hurtful words, carelessness|Mind what comes out of your mouth.
+decisive, blunt, charging ahead|Move fast and go straight to the core.|impulsive, rude, reckless|Too fast and too sharp, and people get hurt.
+clear-headed, independent, direct|Sharp judgment sees past the surface.|cold, cutting, closed off|Logic has become a wall.
+reason, authority, fair judgment|Decide with logic and principle.|manipulation, tyranny, coldness|Intelligence is being used to control others.`,
+pentacles:`new opportunity, prosperity, a practical start|A real, workable opportunity appears.|missed chance, poor planning|The chance is here but you're not ready.
+balance, flexibility, juggling|Moving nimbly between several things.|overstretched, off balance|Too many balls in the air, about to drop one.
+teamwork, skill, collaboration|Working with others gets it done well.|poor coordination, low quality|Everyone on the team is doing their own thing.
+security, saving, holding on|Protect what you have.|over-control, stinginess|Gripping too tight means losing it anyway.
+hardship, lack, isolation|In hard times, ask for help. The door is actually open.|recovery, receiving help|The hardest part is over.
+giving, sharing, reciprocity|Finding balance between giving and receiving.|inequality, strings attached|The help comes with conditions.
+patience, assessment, long-term investment|Results take time. Check what you've put in.|impatience, effort without reward|The direction of your effort may need adjusting.
+focus, mastery, diligence|Steady practice is making you better.|perfectionism, burnout, cutting corners|Repetition has drained your passion.
+independence, abundance, self-sufficiency|Enjoying the fruits of your own work.|overwork, financial instability|Polished on the outside, uneasy inside.
+legacy, family, lasting wealth|A solid foundation and long-term security.|family money trouble, broken legacy|Money or family duty is creating pressure.
+learning, grounded, new plans|Seriously learn a useful new skill.|procrastination, lack of focus|Lots of ideas, not enough action.
+steady, responsible, persistent|Slow, but you'll definitely get there.|stagnation, boredom, stubbornness|So steady it's become stuck.
+practical, nurturing, abundant|Taking good care of life and the people in it.|self-neglect, over-worrying|Busy caring for everything except yourself.
+success, stability, financial skill|Reliable, accomplished, and good at building things.|materialism, stubbornness, greed|Too focused on gain and loss.`
+};
+
+const EN_MAJOR_TOPIC = `Enjoy the butterflies, no need to define it yet|Good time to try a new direction or switch paths|Watch impulse spending and keep a cushion|Get out and move, but watch for small accidents|Keep things light with family|Be open to meeting new people
+Say how you feel and the chance is yours|Your skills are ready, so go for it|Use what you have to create income|You can reset your routine starting today|Reaching out first clears up misunderstandings|Your way with words draws people in
+Feelings are still growing quietly, give it time|Watch before you make a move|Stay careful and research before trusting a hunch|Notice your body's subtle signals|Listen for what family isn't saying|A little distance makes relationships easier
+Sweet and cherished, the bond is growing|Work is bearing fruit, great for creative projects|Steady income, a little treat is fine|Eat well, rest, and pamper yourself|A warm home, make time to be together|Your warmth makes people want to be near you
+It needs real commitment, just don't be too controlling|Build systems and step into leadership|Stick to a budget, discipline brings security|A regular routine is the best care|Someone needs to step up at home|Set boundaries and people will respect you more
+A time for serious commitment or family blessing|Learn from mentors and follow the process|Choose steady, traditional ways to manage money|Follow professional advice and get checkups|Respect family traditions and elders|You'll find where you belong in a group
+Real attraction, and an important choice in love|A partnership offer, or a direction to choose|Money decisions should match your real values|Notice how your love life affects your mood|Family needs an honest conversation|You'll meet someone you really click with
+Go after it and take the lead|Clear goals, time to push hard|Chase income but manage the risk|Plenty of energy, great for exercise|Take the lead on a family problem|Push past differences and move forward together
+Tend the relationship with patience and warmth|Handle work challenges with quiet strength|Steady progress, resist impulses|Your body bounces back, care for your emotions too|Gentle patience eases family friction|Sincerity and patience earn trust
+Time alone to think, love is on pause|Good for study and deep work, no need to show off|Save quietly and cut extras|Rest, stay calm, cut back on stimulation|Give each other some space|A few close friends is plenty
+Fate is turning, maybe a new meeting|Things are shifting and openings appear|Money goes up and down, catch the timing|Your state shifts with your routine, stay flexible|Changes at home, face them together|Your social circle is reshuffling
+The relationship needs fairness and honesty|You'll be judged fairly, read contracts carefully|Balance the books and handle contracts well|Your body reflects your lifestyle, small changes help|Family matters need a fair approach|Be honest and your conscience stays clear
+A pause in love, see them from a new angle|Work is stalled, a good time to learn|Hold off on big investments and wait|Slow down and give your body time|Give to family without losing yourself|Step back and things flow better
+An old relationship ends or its pattern changes|One phase of work ends, a new one begins|Drop old spending habits|Quit a bad habit and start fresh|Family relationships enter a new stage|Some ties fade, and new ones begin
+Slow and steady, adjusting to each other|Coordinate everyone and keep steady progress|Spend within your means|Balanced meals and moderate exercise|Be the bridge between family members|Easygoing, with smooth communication
+Strong attraction, but watch for dependence or control|Tied down by work, or tempted by gain|Watch debt and impulse buys|Watch for addictions or bad habits|Tangled feelings at home need loosening|Beware relationships that drain you
+Sudden change, the truth comes out|Sudden shifts, adapt quickly|Watch for surprise expenses|Watch for sudden issues and don't push through|A family clash, talking it out helps|Sudden shifts show who your real friends are
+Full of hope, it's okay to wish sincerely|Bright outlook, follow your ideals|Finances are slowly improving|Body and mind are recovering|Family members heal each other|You'll meet people who lift you up
+Things feel ambiguous, try not to overthink|Unclear info, don't trust rumors|Watch for scams and shady investments|Mind your sleep and mood|Someone at home has unspoken worries|Watch for misunderstandings and suspicion
+Happy and sweet, out in the open|You shine and get recognized|Money flows well|Full of energy, feeling great|A happy home, great for a trip together|Popular and well liked
+An old flame returns, or you rethink the relationship|Good news and a new opportunity|Revisit your financial plan|Reset your habits|A good time for family reconciliation|A chance to repair old friendships
+Fulfillment, possibly a happy ending|Mission complete, goal reached|Financial goal achieved|Body and mind in balance|Family harmony|A wide network with friends everywhere`.split('\n').map(l=>l.split('|'));
+
+const EN_SUIT_TOPIC = {
+  wands:"Love runs on passion here, it's about initiative and attraction|It's about drive and ambition, good for starting things|Income follows action, dare and you'll find chances|Linked to stamina and energy, avoid overwork|Home needs more warmth and energy|Your enthusiasm brings people together".split('|'),
+  cups:"The most direct suit for love, it's about feelings and intentions|Relationships at work and a sense of fulfillment are key|Money is swayed by mood, avoid emotional spending|Closely tied to emotions and mental state|It's about emotional connection within the family|It's about emotional bonds and understanding".split('|'),
+  swords:"Love needs clear talk and reason, watch hurtful words|It's about judgment and strategy, expect competition|Think it through logically and avoid money fights|Watch stress, anxiety, and sleep|Things at home need to be said clearly|How you communicate makes or breaks it".split('|'),
+  pentacles:"Love is practical here, look at stability and long-term plans|Tied to real results, income, and building expertise|This is the money suit, directly about finances|Linked to body, diet, and routine|About household finances and daily care|Practical support and long-lasting friendships".split('|')
+};
+/* ---------- Build cards ---------- */
+const SUIT_NAMES = {wands:{en:'Wands',zh:'權杖'},cups:{en:'Cups',zh:'聖杯'},swords:{en:'Swords',zh:'寶劍'},pentacles:{en:'Pentacles',zh:'錢幣'}};
+const MAJOR_EN = ['The Fool','The Magician','The High Priestess','The Empress','The Emperor','The Hierophant','The Lovers','The Chariot','Strength','The Hermit','Wheel of Fortune','Justice','The Hanged Man','Death','Temperance','The Devil','The Tower','The Star','The Moon','The Sun','Judgement','The World'];
+const MAJOR_SYM = ['✿','∞','◐','❀','♔','✙','♡','➤','♌\uFE0E','✶','☸\uFE0E','⚖\uFE0E','⇅','☠\uFE0E','≈','✕','ϟ','★','☾','☀\uFE0E','♫','⊕'];
+const RANK_ZH = ['王牌','二','三','四','五','六','七','八','九','十','侍者','騎士','皇后','國王'];
+const RANK_EN = ['Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Page','Knight','Queen','King'];
+const ROMAN = ['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'];
+const MARK = {en:['A','II','III','IV','V','VI','VII','VIII','IX','X','P','Kn','Q','K'], zh:['A','II','III','IV','V','VI','VII','VIII','IX','X','侍','騎','后','王']};
+const pair = l=>{const a=l.split('|');return {up:[a[0],a[1]],rev:[a[2],a[3]]}};
+
+const CARDS = [];
+const zhMaj = ZH_MAJORS.trim().split('\n'), enMaj = EN_MAJORS.trim().split('\n');
+zhMaj.forEach((l,i)=>{
+  const a = l.split('|');
+  CARDS.push({id:'m'+i, idx:i, major:true,
+    name:{zh:a[0], en:MAJOR_EN[i]},
+    mark:{zh:ROMAN[i], en:ROMAN[i]},
+    glyph:{zh:a[0][0]==='命'?'輪':a[0][0], en:MAJOR_SYM[i]},
+    m:{zh:{up:[a[2],a[3]],rev:[a[4],a[5]]}, en:pair(enMaj[i])}});
+});
+Object.keys(SUIT_NAMES).forEach(s=>{
+  const z = ZH_MINORS[s].trim().split('\n'), e = EN_MINORS[s].trim().split('\n');
+  z.forEach((l,i)=>CARDS.push({id:s+i, idx:i, major:false, suit:s,
+    name:{zh:SUIT_NAMES[s].zh+RANK_ZH[i], en:`${RANK_EN[i]} of ${SUIT_NAMES[s].en}`},
+    mark:{zh:MARK.zh[i], en:MARK.en[i]},
+    m:{zh:pair(l), en:pair(e[i])}}));
+});
+
+const SVG = {
+  wands:`<svg viewBox="0 0 40 60"><g fill="none" stroke="#111" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M17 56 L23 4 L27 5 L21 57 Z" fill="#FFF"/><path d="M22 18 q7 -3 9 -9 q-7 1 -9 9" fill="#111"/><path d="M20 34 q-8 -2 -11 -8 q8 0 11 8" fill="#111"/></g></svg>`,
+  cups:`<svg viewBox="0 0 40 60"><g stroke="#111" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M8 8 H32 Q32 28 20 31 Q8 28 8 8 Z" fill="#FFF"/><path d="M9 14 H31 Q30 26 20 28 Q10 26 9 14 Z" fill="#111"/><path d="M18 31 H22 V44 H18 Z" fill="#FFF"/><path d="M10 52 Q20 42 30 52 Z" fill="#FFF"/></g></svg>`,
+  swords:`<svg viewBox="0 0 40 60"><g stroke="#111" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M20 2 L24 9 V40 H16 V9 Z" fill="#FFF"/><path d="M8 40 H32 V44 H8 Z" fill="#111"/><path d="M18 44 H22 V53 H18 Z" fill="#FFF"/><circle cx="20" cy="55.5" r="3" fill="#111"/></g></svg>`,
+  pentacles:`<svg viewBox="0 0 40 60"><g stroke="#111" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><circle cx="20" cy="30" r="16" fill="#FFF"/><path d="M20 18.5 L22.7 26.3 H30.9 L24.3 31.2 L26.8 39 L20 34.3 L13.2 39 L15.7 31.2 L9.1 26.3 H17.3 Z" fill="#111"/></g></svg>`
+};
+
+/* ---------- Topics, spreads, strings ---------- */
+const TOPIC_KEYS = ['love','career','money','health','family','social'];
+const TOPICS = {
+  general:{en:{name:'General',ph:'e.g. What do the next few months look like?',three:['Past','Present','Future']},
+           zh:{name:'綜合',ph:'例如：接下來這幾個月會怎麼樣？',three:['過去','現在','未來']}},
+  love:{en:{name:'Love',ph:'e.g. Is there something between us?',three:['Your feelings','Their feelings','Where it’s going']},
+        zh:{name:'戀愛',ph:'例如：我和他之間會有發展嗎？',three:['你的心意','對方的心意','關係走向']}},
+  career:{en:{name:'Career',ph:'e.g. Is this new job right for me?',three:['Where you are','The challenge','Advice']},
+          zh:{name:'事業',ph:'例如：這份新工作適合我嗎？',three:['目前狀況','眼前挑戰','發展建議']}},
+  money:{en:{name:'Money',ph:'e.g. How are my finances looking?',three:['Income','Spending & risks','Advice']},
+         zh:{name:'財運',ph:'例如：這陣子的財務狀況如何？',three:['收入狀況','支出與風險','理財建議']}},
+  health:{en:{name:'Health',ph:'e.g. What should I pay attention to lately?',three:['Body','Mind','Self-care']},
+          zh:{name:'健康',ph:'例如：最近身心狀態需要注意什麼？',three:['身體狀態','心理狀態','照顧建議']}},
+  family:{en:{name:'Family',ph:'e.g. How can I get along better with my mom?',three:['Your role','How they are','How to connect']},
+          zh:{name:'家人',ph:'例如：我和媽媽的關係該怎麼改善？',three:['你的角色','家人的狀態','相處建議']}},
+  social:{en:{name:'Friends',ph:'e.g. How should I handle things with my coworker?',three:['How you come across','Where things stand','How to connect']},
+          zh:{name:'人際',ph:'例如：和同事之間該怎麼相處？',three:['你給人的印象','關係現況','相處建議']}}
+};
+const SPREADS = {
+  single:{cls:'single', en:{name:'One card',desc:'A quick direction',pos:['Core message']}, zh:{name:'單張牌',desc:'一張牌，快速給方向',pos:['核心訊息']}},
+  three:{cls:'three', en:{name:'Time flow'}, zh:{name:'時間之流'}},
+  celtic:{cls:'celtic', en:{name:'Celtic Cross',desc:'Ten cards, the full picture',pos:['Present','Challenge','Goal','Foundation','Past','Near future','Your attitude','Surroundings','Hopes & fears','Outcome']},
+          zh:{name:'凱爾特十字',desc:'十張牌，看整個局面',pos:['現況','阻礙','目標與理想','根基','過去','近未來','自己的態度','外在環境','希望與恐懼','最終結果']}}
+};
+const T = {
+ en:{brand:'Tarot Table',h1:'Draw a card,<br>talk it through',lede:'Write down the question, pick a spread, and draw by feel.',
+  topicLegend:'What’s it about?',nameLabel:'Name',namePh:'e.g. Mia (optional)',qLabel:'The question',spreadLegend:'Spread',
+  revLabel:'Include reversed cards',skip:'Skip',back:'Back',hello:n=>n?`Hi ${n}!`:'Hi there!',shuffle:'Shuffle',hint:'Swipe to see the whole deck. Tap a card to draw it.',
+  fan:'The deck',cardN:i=>`Card ${i}`,
+  pickTitle:(n,name)=>`${name?name+', p':'P'}ick ${n} card${n>1?'s':''} by feel`,
+  readTitle:(topic,name,spread)=>`${topic?topic+' reading':'Reading'}${name?' for '+name:''}`,
+  qPrefix:'Question: ',spreadPrefix:'Spread: ',
+  flipAll:'Flip all',ai:'Ask Claude to go deeper',aiDeepTitle:'Claude’s take',copy:'Copy reading',again:'Start over',aiTitle:'Full reading',stop:'Stop',
+  healthNote:'Health readings are for reflection only. If you feel unwell, please see a doctor.',
+  empty:'Tap a card on the table to flip it. Its meaning will show up here.',
+  up:'Upright',rev:'Reversed',topicPrefix:t=>`For ${t.toLowerCase()}: `,
+  flipLabel:p=>`${p}, tap to flip`,flipped:(p,c,r)=>`${p}: ${c} (${r})`,
+  needFlip:'Flip all the cards first',copied:'Copied. Ready to send!',flipFirst:'Flip at least one card first',copyFail:'Copying isn’t allowed here. Please select the text manually.',
+  aiThinking:'Claude is reading the cards. This takes about 10 to 60 seconds…',aiDenied:'Permission to use Claude wasn’t granted, so this feature is hidden for now.',
+  aiStopped:'Stopped.',aiRate:'Too many requests. Please wait a moment and try again.',aiFail:'The reading didn’t finish. Please try again.',
+  foot:'Tarot is a tool for reflection, not a fixed prophecy. Big decisions are yours to make.',
+  copyTitle:'Tarot reading',copyTopic:'Topic',copyAI:'Full reading',
+  majRev:', though reversed, this energy is blocked or overdone right now.',minRev:'. Reversed, this energy may be stuck or overused.'},
+ zh:{brand:'塔羅牌桌',h1:'抽張牌，<br>聊聊心事',lede:'寫下想問的事，選個牌陣，憑直覺抽牌就好。',
+  topicLegend:'想問哪方面',nameLabel:'名字',namePh:'例如：小美（可留空）',qLabel:'想問的事',spreadLegend:'牌陣',
+  revLabel:'包含逆位牌',skip:'略過',back:'上一題',hello:n=>n?`嗨，${n}！`:'嗨！',shuffle:'洗牌',hint:'左右滑動看看整副牌，點一張就會抽出來。',
+  fan:'整副牌',cardN:i=>`第 ${i} 張牌`,
+  pickTitle:(n,name)=>name?`請${name}憑直覺抽 ${n} 張牌`:`請憑直覺抽 ${n} 張牌`,
+  readTitle:(topic,name,spread)=>(topic?topic+'｜':'')+(name?`${name}的${spread}`:spread),
+  qPrefix:'問題：',spreadPrefix:'牌陣：',
+  flipAll:'全部翻開',ai:'請 Claude 深入解讀',aiDeepTitle:'Claude 的解讀',copy:'複製解讀結果',again:'重新開始',aiTitle:'綜合解讀',stop:'停止',
+  healthNote:'健康相關的解讀只供參考，身體不舒服請找醫師。',
+  empty:'點牌桌上的牌把它翻開，這裡會出現每張牌的意思。',
+  up:'正位',rev:'逆位',topicPrefix:t=>`放在${t}上看：`,
+  flipLabel:p=>`${p}，點一下翻開`,flipped:(p,c,r)=>`${p}：${c}（${r}）`,
+  needFlip:'先把所有牌翻開',copied:'已複製，可以貼給對方了',flipFirst:'先翻開至少一張牌',copyFail:'這個瀏覽器不允許複製，請手動選取文字',
+  aiThinking:'Claude 正在看牌，大約需要十幾秒到一分鐘……',aiDenied:'沒有取得使用 Claude 的許可，這個功能先隱藏起來。',
+  aiStopped:'已停止。',aiRate:'請求太頻繁了，請稍等一下再試。',aiFail:'綜合解讀沒有完成，請再按一次試試。',
+  foot:'塔羅牌是幫助思考的工具，不是命定的預言。重要的決定，請留給自己。',
+  copyTitle:'塔羅解讀',copyTopic:'主題',copyAI:'綜合解讀',
+  majRev:'，但目前逆位，這股能量卡住了或用過頭，需要多留意。',minRev:'；逆位時，這方面的能量可能卡住，或用得太過。'}
+};
+
+/* ---------- Profile questions ---------- */
+const FACE = (extra,eyes,mouth,after='')=>`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${extra}<circle cx="32" cy="36" r="18" fill="#FFF"/>${after}${eyes||'<circle cx="25" cy="37" r="2.4" fill="#111" stroke="none"/><circle cx="39" cy="37" r="2.4" fill="#111" stroke="none"/>'}<ellipse cx="21" cy="43" rx="3" ry="1.8" fill="#111" opacity=".22" stroke="none"/><ellipse cx="43" cy="43" rx="3" ry="1.8" fill="#111" opacity=".22" stroke="none"/>${mouth||'<path d="M28 44 Q32 48 36 44" fill="none"/>'}</g></svg>`;
+const HEART = 'M32 52 C12 38 10 24 20 18 C26 14 32 18 32 24 C32 18 38 14 44 18 C54 24 52 38 32 52Z';
+const IC = {
+  girl: FACE('<circle cx="13" cy="28" r="7" fill="#111"/><circle cx="51" cy="28" r="7" fill="#111"/>','','','<path d="M14 34 Q16 16 32 17 Q48 16 50 34 Q42 25 32 27 Q22 25 14 34Z" fill="#111"/>'),
+  boy: FACE('','','','<path d="M14 34 Q13 17 32 17 Q51 17 50 34 Q46 26 38 26 L35 21 L32 26 Q20 25 14 34Z" fill="#111"/><path d="M32 17 Q30 10 36 9" fill="none"/>'),
+  other: FACE('','','','<path d="M14 32 Q14 14 32 14 Q50 14 50 32 Z" fill="#FFF"/><path d="M13 30 H51 V35 H13Z" fill="#111"/><circle cx="32" cy="10" r="4.5" fill="#111"/>'),
+  secret:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="M15 54 V30 Q15 12 32 12 Q49 12 49 30 V54 L43 49 L38 54 L32 49 L26 54 L21 49 Z" fill="#FFF"/><ellipse cx="26" cy="30" rx="2.4" ry="3.4" fill="#111" stroke="none"/><ellipse cx="38" cy="30" rx="2.4" ry="3.4" fill="#111" stroke="none"/><path d="M29 38 Q32 41 35 38" fill="none"/><ellipse cx="21" cy="36" rx="3" ry="1.8" fill="#111" opacity=".22" stroke="none"/><ellipse cx="43" cy="36" rx="3" ry="1.8" fill="#111" opacity=".22" stroke="none"/></g></svg>`,
+  u18:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M16 54 H48"/><path d="M32 54 V34" fill="none"/><path d="M32 40 Q19 38 17 26 Q30 26 32 40Z" fill="#FFF"/><path d="M32 35 Q45 31 47 20 Q34 20 32 35Z" fill="#111"/></g></svg>`,
+  a18:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 56 V32" fill="none"/><path d="M32 48 Q22 46 20 38 Q30 38 32 48Z" fill="#FFF"/><circle cx="32" cy="14" r="6" fill="#FFF"/><circle cx="42" cy="21" r="6" fill="#FFF"/><circle cx="38" cy="32" r="6" fill="#FFF"/><circle cx="26" cy="32" r="6" fill="#FFF"/><circle cx="22" cy="21" r="6" fill="#FFF"/><circle cx="32" cy="23" r="5" fill="#111"/></g></svg>`,
+  a30:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M29 56 V38 H35 V56" fill="#FFF"/><circle cx="32" cy="26" r="15" fill="#FFF"/><path d="M26 24 q3 -3 6 0 M34 30 q3 -3 6 0" fill="none"/><path d="M18 56 H46"/></g></svg>`,
+  a45:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M28 57 V40 H36 V57" fill="#FFF"/><circle cx="20" cy="30" r="11" fill="#111"/><circle cx="44" cy="30" r="11" fill="#111"/><circle cx="32" cy="20" r="13" fill="#111"/><path d="M14 57 H50"/></g></svg>`,
+  student:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 32 V43 Q32 51 46 43 V32" fill="#FFF"/><path d="M6 26 L32 15 L58 26 L32 37Z" fill="#111"/><path d="M52 28 V41" fill="none"/><circle cx="52" cy="43" r="2.5" fill="#111"/></g></svg>`,
+  work:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="16" width="36" height="25" rx="4" fill="#FFF"/><circle cx="26" cy="27" r="2" fill="#111" stroke="none"/><circle cx="38" cy="27" r="2" fill="#111" stroke="none"/><path d="M28 32 Q32 35 36 32" fill="none"/><path d="M8 45 H56 L52 50 H12Z" fill="#111"/></g></svg>`,
+  own:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10 Q46 10 46 25 Q46 33 39 38 V43 H25 V38 Q18 33 18 25 Q18 10 32 10Z" fill="#FFF"/><path d="M26 48 H38 M28 53 H36" fill="none"/><path d="M28 30 L32 24 L36 30" fill="none"/><path d="M8 18 l4 2 M56 18 l-4 2 M32 3 v3" fill="none"/></g></svg>`,
+  rest:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 28 H44 V44 Q44 54 34 54 H24 Q14 54 14 44Z" fill="#FFF"/><path d="M44 32 Q54 32 54 38 Q54 44 44 44" fill="none"/><path d="M22 20 q-3 -4 0 -8 M30 20 q-3 -4 0 -8 M38 20 q-3 -4 0 -8" fill="none"/><circle cx="24" cy="38" r="1.8" fill="#111" stroke="none"/><circle cx="34" cy="38" r="1.8" fill="#111" stroke="none"/><path d="M27 43 Q29 45 31 43" fill="none"/></g></svg>`,
+  single:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linejoin="round"><path d="${HEART}" fill="#FFF"/></g></svg>`,
+  crush:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="${HEART}" fill="#111"/><path d="M10 12 v8 M6 16 h8 M54 8 v6 M51 11 h6" fill="none"/></g></svg>`,
+  taken:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linejoin="round"><path d="${HEART}" transform="translate(-8 -2) scale(.8) translate(8 8)" fill="#FFF"/><path d="${HEART}" transform="translate(14 6) scale(.8)" fill="#111"/></g></svg>`,
+  married:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linejoin="round"><circle cx="32" cy="40" r="15" fill="none"/><path d="M24 20 L28 12 H36 L40 20 L32 28Z" fill="#FFF"/><path d="M24 20 H40" fill="none"/></g></svg>`,
+  complicated:`<svg viewBox="0 0 64 64"><g stroke="#111" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="${HEART}" fill="#FFF"/><path d="M24 26 q4 -4 8 0 t8 0 M22 33 q5 -4 10 0 t10 0 q-4 5 -12 5 q-6 0 -6 4" fill="none"/></g></svg>`,
+  great: FACE('','<path d="M22 38 q3 -4 6 0 M36 38 q3 -4 6 0" fill="none"/>','<path d="M26 43 Q32 51 38 43Z" fill="#111"/>'),
+  calm: FACE('','<path d="M22 36 q3 3 6 0 M36 36 q3 3 6 0" fill="none"/>'),
+  worried: FACE('<path d="M50 16 q4 6 0 8 q-4 -2 0 -8Z" fill="#FFF"/>','<circle cx="25" cy="36" r="2.4" fill="#111" stroke="none"/><circle cx="39" cy="36" r="2.4" fill="#111" stroke="none"/><path d="M21 30 l6 -2 M43 30 l-6 -2" fill="none"/>','<path d="M26 46 q2 -2 4 0 t4 0 t4 0" fill="none"/>'),
+  down: FACE('','<path d="M22 36 h6 M36 36 h6" fill="none"/><path d="M25 40 v4" fill="none"/>','<path d="M28 47 Q32 43 36 47" fill="none"/>')
+};
+const QUESTIONS = [
+  {key:'gender', title:{en:'Who’s asking?',zh:'是誰要抽牌呢？'}, sub:{en:'A few quick taps so the reading fits you better.',zh:'點幾下就好，讓解讀更貼近你。'},
+   opts:[['girl','Female','女性'],['boy','Male','男性'],['other','Something else','其他'],['secret','It’s a secret','秘密']]},
+  {key:'age', title:{en:'How old?',zh:'年紀大約是？'},
+   opts:[['u18','Under 18','18 歲以下'],['a18','18 to 29','18 到 29 歲'],['a30','30 to 44','30 到 44 歲'],['a45','45 and up','45 歲以上']]},
+  {key:'stage', title:{en:'What are you up to these days?',zh:'最近在忙什麼？'},
+   opts:[['student','Studying','在讀書'],['work','Working','在上班'],['own','Doing my own thing','創業或接案'],['rest','Taking a break','休息中']]},
+  {key:'rel', title:{en:'Your love life right now?',zh:'目前的感情狀態？'},
+   opts:[['single','Single','單身'],['crush','Have a crush','有喜歡的人'],['taken','In a relationship','交往中'],['married','Married','已婚'],['complicated','It’s complicated','很複雜']]},
+  {key:'mood', title:{en:'How are you feeling today?',zh:'今天心情如何？'},
+   opts:[['great','Great','很好'],['calm','Calm','平靜'],['worried','A bit worried','有點擔心'],['down','Tired or down','累累的']]}
+];
+const optLabel = (key,v,lang)=>{ const q=QUESTIONS.find(q=>q.key===key); const o=q&&q.opts.find(o=>o[0]===v); return o?(lang==='zh'?o[2]:o[1]):''; };
+const MOOD_MSG = {
+  great:{en:'Love the energy! Let’s see what the cards have to say.',zh:'心情不錯！來看看牌想說什麼。'},
+  calm:{en:'Nice and steady. A good state for a clear reading.',zh:'心很平靜，很適合抽牌。'},
+  worried:{en:'Take a slow breath. The cards are here to help you think, not to scare you.',zh:'先慢慢深呼吸。牌是陪你想清楚的，不是來嚇你的。'},
+  down:{en:'Sounds like a heavy time. Go easy on yourself, and let’s look at this gently.',zh:'最近好像有點累，對自己溫柔一點，我們慢慢看。'}
+};
+
+/* ---------- State ---------- */
+let LANG = 'en';
+try{ const saved = localStorage.getItem('tarot-lang'); if(saved==='zh'||saved==='en') LANG = saved; }catch{}
+const S = {stage:'intro',introStep:0,profile:{},topic:'general',name:'',question:'',spread:'three',reversals:true,deck:[],picks:[],flipped:new Set(),aiText:''};
+const $ = id=>document.getElementById(id);
+const t = ()=>T[LANG];
+const selTopic = ()=>document.querySelector('input[name=topic]:checked')?.value || 'general';
+const positionsFor = (spread,topic)=> spread==='three' ? TOPICS[topic][LANG].three : SPREADS[spread][LANG].pos;
+const positions = ()=>positionsFor(S.spread,S.topic);
+const cardName = c=>c.name[LANG];
+const meaning = p=> p.reversed ? p.card.m[LANG].rev : p.card.m[LANG].up;
+
+function topicLine(card,reversed,topic){
+  if(topic==='general') return '';
+  const k = TOPIC_KEYS.indexOf(topic);
+  const base = card.major ? (LANG==='en'?EN_MAJOR_TOPIC:ZH_MAJOR_TOPIC)[card.idx][k]
+                          : (LANG==='en'?EN_SUIT_TOPIC:ZH_SUIT_TOPIC)[card.suit][k];
+  if(!reversed) return base + (LANG==='en'?'.':'。');
+  return base + (card.major ? t().majRev : t().minRev);
+}
+
+/* ---------- Card elements ---------- */
+function frontHTML(card,reversed){
+  const emblem = card.major ? `<span class="glyph">${card.glyph[LANG]}</span>` : SVG[card.suit];
+  return `<div class="face front"><div class="front-in ${reversed?'rev':''}">
+    <span class="num">${card.mark[LANG]}</span><div class="emblem">${emblem}</div><span class="nm">${cardName(card)}</span></div></div>`;
+}
+function cardEl(tag,card,reversed){
+  const el = document.createElement(tag); el.className='card';
+  el.innerHTML = `<div class="card-in"><div class="face back"></div>${card?frontHTML(card,reversed):''}</div>`;
+  return el;
+}
+for(let i=0;i<3;i++) $('stack').appendChild(cardEl('div'));
+
+/* ---------- Language ---------- */
+function applyLang(){
+  document.documentElement.lang = LANG==='en'?'en':'zh-Hant';
+  document.body.classList.toggle('en', LANG==='en');
+  document.title = t().brand;
+  document.querySelectorAll('[data-lang]').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.lang===LANG)));
+  document.querySelectorAll('[data-i]').forEach(el=>{ el.textContent = t()[el.dataset.i]; });
+  $('h1').innerHTML = t().h1;
+  $('home').setAttribute('aria-label', t().brand);
+  $('qName').placeholder = t().namePh;
+  // topics
+  const cur = selTopic();
+  $('topics').innerHTML = Object.keys(TOPICS).map(k=>`<label><input type="radio" name="topic" value="${k}" ${k===cur?'checked':''}>${TOPICS[k][LANG].name}</label>`).join('');
+  $('topics').querySelectorAll('input').forEach(r=>r.addEventListener('change',updateSetupText));
+  updateSetupText();
+  $('fan').setAttribute('aria-label', t().fan);
+  $('fan').querySelectorAll('.pick').forEach((b,i)=>b.setAttribute('aria-label', t().cardN(i+1)));
+  renderIntro(); updateHello();
+  if(S.stage==='pick') updatePickText();
+  if(S.stage==='read') buildReading(true);
+}
+function updateSetupText(){
+  const tp = selTopic();
+  $('qText').placeholder = TOPICS[tp][LANG].ph;
+  ['single','three','celtic'].forEach(k=>{
+    $('sp-'+k).textContent = SPREADS[k][LANG].name;
+    $('spd-'+k).textContent = k==='three' ? TOPICS[tp][LANG].three.join(LANG==='en'?', ':'、') : SPREADS[k][LANG].desc;
+  });
+}
+document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>{
+  if(LANG===b.dataset.lang) return;
+  LANG = b.dataset.lang;
+  try{ localStorage.setItem('tarot-lang',LANG); }catch{}
+  applyLang();
+}));
+
+/* ---------- Intro quiz ---------- */
+function renderIntro(){
+  const i = S.introStep, q = QUESTIONS[i];
+  $('qdots').innerHTML = QUESTIONS.map((_,k)=>`<span class="${k<=i?'on':''}"></span>`).join('');
+  $('qTitle').textContent = q.title[LANG];
+  $('qSub').textContent = q.sub ? q.sub[LANG] : `${i+1} / ${QUESTIONS.length}`;
+  $('nameWrap').hidden = i!==0;
+  $('backBtn').style.visibility = i===0 ? 'hidden' : 'visible';
+  $('opts').setAttribute('aria-label', q.title[LANG]);
+  $('opts').innerHTML = '';
+  q.opts.forEach(([v,en,zh])=>{
+    const b = document.createElement('button');
+    b.className='opt'; b.setAttribute('aria-pressed', String(S.profile[q.key]===v));
+    b.innerHTML = `<span class="ic" aria-hidden="true">${IC[v]}</span>`;
+    b.append(LANG==='zh'?zh:en);
+    b.addEventListener('click',()=>{
+      S.profile[q.key]=v;
+      $('opts').querySelectorAll('.opt').forEach(o=>o.setAttribute('aria-pressed', String(o===b)));
+      setTimeout(nextQ, reduced()?0:280);
+    });
+    $('opts').appendChild(b);
+  });
+}
+function nextQ(){
+  if(S.introStep < QUESTIONS.length-1){ S.introStep++; renderIntro(); }
+  else finishIntro();
+}
+function finishIntro(){
+  S.name = $('qName').value.trim();
+  updateHello();
+  show('setup');
+}
+function updateHello(){
+  const g = S.profile.gender;
+  $('hello').innerHTML = (g?`<span class="ic" aria-hidden="true">${IC[g]}</span>`:'');
+  $('hello').append(t().hello($('qName').value.trim()));
+  $('hello').style.paddingLeft = g ? '' : '14px';
+}
+$('skipBtn').addEventListener('click',finishIntro);
+$('backBtn').addEventListener('click',()=>{ if(S.introStep>0){S.introStep--; renderIntro();} });
+function startIntro(){ S.introStep=0; renderIntro(); show('intro'); }
+
+/* ---------- Stages ---------- */
+function show(stage){
+  S.stage = stage;
+  ['intro','setup','pick','read'].forEach(s=>$(s).hidden = s!==stage);
+  $('stepper').style.visibility = stage==='intro'?'hidden':'visible';
+  document.querySelectorAll('#stepper li').forEach(li=>{
+    if(li.dataset.s===stage) li.setAttribute('aria-current','step'); else li.removeAttribute('aria-current');
+  });
+  window.scrollTo({top:0});
+}
+function shuffleDeck(){
+  const d = CARDS.slice();
+  for(let i=d.length-1;i>0;i--){const j=crypto.getRandomValues(new Uint32Array(1))[0]%(i+1);[d[i],d[j]]=[d[j],d[i]]}
+  return d;
+}
+const reduced = ()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+$('shuffleBtn').addEventListener('click',()=>{
+  S.name = $('qName').value.trim() || S.name;
+  S.question = $('qText').value.trim();
+  S.spread = document.querySelector('input[name=spread]:checked').value;
+  S.topic = selTopic();
+  S.reversals = $('qRev').checked;
+  S.deck = shuffleDeck(); S.picks=[]; S.flipped=new Set(); S.aiText='';
+  $('shuffleBtn').disabled = true;
+  $('stack').classList.add('shuffling');
+  setTimeout(()=>{
+    $('stack').classList.remove('shuffling');
+    $('shuffleBtn').disabled = false;
+    buildPick(); show('pick');
+  }, reduced()?0:1400);
+});
+
+function buildPick(){
+  const fan = $('fan'); fan.innerHTML='';
+  S.deck.forEach((card,i)=>{
+    const b = cardEl('button'); b.classList.add('pick');
+    b.setAttribute('aria-label', t().cardN(i+1));
+    b.addEventListener('click',()=>takeCard(i,b));
+    fan.appendChild(b);
+  });
+  fan.scrollLeft = 0;
+  updatePickText();
+}
+function updatePickText(){
+  const n = positions().length;
+  $('pickTitle').textContent = t().pickTitle(n,S.name);
+  $('counter').textContent = `${S.picks.length} / ${n}`;
+  $('tray').innerHTML = Array.from({length:n},(_,i)=>`<span class="${i<S.picks.length?'on':''}"></span>`).join('');
+}
+function takeCard(i,btn){
+  const n = positions().length;
+  if(S.picks.length>=n || btn.classList.contains('taken')) return;
+  btn.classList.add('taken');
+  const reversed = S.reversals && crypto.getRandomValues(new Uint8Array(1))[0] < 128;
+  S.picks.push({card:S.deck[i],reversed});
+  updatePickText();
+  if(S.picks.length===n) setTimeout(()=>{buildReading();show('read')},450);
+}
+
+/* ---------- Reading ---------- */
+function buildReading(keepState){
+  const sp = SPREADS[S.spread], pos = positions();
+  const topicName = S.topic==='general' ? '' : TOPICS[S.topic][LANG].name;
+  $('readTitle').textContent = t().readTitle(topicName, S.name, sp[LANG].name);
+  const q = $('readQ'); q.textContent='';
+  if(S.question){ q.append(t().qPrefix); const qq=document.createElement('q'); qq.textContent=S.question; q.append(qq); }
+  else q.textContent = t().spreadPrefix + sp[LANG].name;
+  renderProfile();
+  $('healthNote').hidden = S.topic!=='health';
+  const board = $('board'); board.className='board '+sp.cls+(keepState?' noanim':''); board.innerHTML='';
+  let centerCell=null;
+  S.picks.forEach((p,i)=>{
+    const slot = document.createElement('div'); slot.className='slot';
+    const c = cardEl('button',p.card,p.reversed);
+    if(S.flipped.has(i)){ c.classList.add('flipped'); c.setAttribute('aria-label', t().flipped(pos[i],cardName(p.card),p.reversed?t().rev:t().up)); }
+    else c.setAttribute('aria-label', t().flipLabel(pos[i]));
+    c.addEventListener('click',()=>flip(i));
+    slot.appendChild(c);
+    const lbl = document.createElement('span'); lbl.className='lbl';
+    lbl.innerHTML = `<b>${i+1}</b>`; lbl.append(pos[i]);
+    slot.appendChild(lbl);
+    if(S.spread==='celtic'){
+      if(i===0){ centerCell=document.createElement('div'); centerCell.className='center-cell'; centerCell.appendChild(slot); board.appendChild(centerCell); }
+      else if(i===1){ slot.classList.add('cross'); centerCell.appendChild(slot); }
+      else { slot.style.gridArea='p'+(i+1); board.appendChild(slot); }
+    } else board.appendChild(slot);
+  });
+  if(keepState){ requestAnimationFrame(()=>requestAnimationFrame(()=>board.classList.remove('noanim'))); }
+  renderEntries(); updateButtons();
+}
+function renderProfile(){
+  const P = S.profile, box = $('profile'); box.innerHTML='';
+  if(P.gender) box.insertAdjacentHTML('beforeend',`<span class="ic" aria-hidden="true">${IC[P.gender]}</span>`);
+  ['age','stage','rel','mood'].forEach(k=>{ if(P[k]){ const s=document.createElement('span'); s.className='tag'; s.textContent=optLabel(k,P[k],LANG); box.appendChild(s);} });
+  box.hidden = !box.children.length;
+  const mm = $('moodMsg');
+  mm.hidden = !P.mood; if(P.mood) mm.textContent = MOOD_MSG[P.mood][LANG];
+}
+function flip(i){
+  if(S.flipped.has(i)) return;
+  S.flipped.add(i);
+  const btn = $('board').querySelectorAll('.slot .card')[i];
+  btn.classList.add('flipped');
+  const p = S.picks[i];
+  btn.setAttribute('aria-label', t().flipped(positions()[i],cardName(p.card),p.reversed?t().rev:t().up));
+  renderEntries(); updateButtons();
+}
+$('flipAll').addEventListener('click',()=>{
+  S.picks.forEach((_,i)=>setTimeout(()=>flip(i), reduced()?0:i*150));
+});
+function renderEntries(){
+  renderSummary();
+  const pos = positions(), box = $('reading'); box.innerHTML='';
+  const shown = S.picks.map((p,i)=>({p,i})).filter(x=>S.flipped.has(x.i));
+  if(!shown.length){ const e=document.createElement('p'); e.className='empty'; e.textContent=t().empty; box.appendChild(e); return; }
+  shown.forEach(({p,i})=>{
+    const m = meaning(p);
+    const e = document.createElement('article'); e.className='entry';
+    e.innerHTML = `<div class="pos"></div><h3><span class="cn"></span><span class="orient"></span></h3><div class="kw"></div><p class="tx"></p>`;
+    e.querySelector('.pos').textContent = `${i+1}  ${pos[i]}`;
+    e.querySelector('.cn').textContent = cardName(p.card);
+    e.querySelector('.orient').textContent = (p.reversed?t().rev:t().up) + (LANG==='zh'?`，${p.card.name.en}`:'');
+    e.querySelector('.kw').textContent = m[0];
+    e.querySelector('.tx').textContent = m[1];
+    const tl = topicLine(p.card,p.reversed,S.topic);
+    if(tl){ const tp=document.createElement('p'); tp.className='topic'; const b=document.createElement('b'); b.textContent=t().topicPrefix(TOPICS[S.topic][LANG].name); tp.append(b,tl); e.appendChild(tp); }
+    box.appendChild(e);
+  });
+}
+const allFlipped = ()=>S.flipped.size===S.picks.length;
+function updateButtons(){
+  $('flipAll').disabled = allFlipped();
+}
+
+/* ---------- Combined reading (no AI) ---------- */
+const SUM = {
+ en:{
+  majorsMany:'Lots of Major Arcana here, so this is about a bigger turning point, not just day-to-day stuff.',
+  majorOne:'A Major Arcana card came up, so this touches on something bigger than it looks.',
+  suit:{wands:'Wands energy is strongest here, so it’s about action, drive, and passion.',
+        cups:'Cups energy is strongest here, so feelings and relationships are at the heart of it.',
+        swords:'Swords energy is strongest here, so it’s about thoughts, decisions, and how things are said, maybe with some stress mixed in.',
+        pentacles:'Pentacles energy is strongest here, so it’s about practical things: money, work, your body, and daily life.'},
+  revMany:'Many cards are reversed, which suggests some energy is blocked right now or turned inward.',
+  allUp:'Every card is upright, so things are flowing fairly openly.',
+  courts:'Several court cards showed up, so other people play a big part in this.',
+  ace:'An Ace appeared, a sign of a fresh start.',
+  first:(p,c,k)=>`Starting with “${p}”: ${c} (${k}).`,
+  mid:(p,c,k)=>`For “${p}”: ${c} (${k}).`,
+  last:(p,c,k)=>`And for “${p}”: ${c} (${k}).`,
+  one:(c,k)=>`${c} (${k}).`,
+  revTag:' reversed',
+  arcUpDown:'It starts out open but gets tangled later on, so keep an eye on the direction things are heading.',
+  arcDownUp:'It starts out stuck but opens up along the way. That’s a hopeful arc.',
+  lens:t=>`Looking at ${t.toLowerCase()}: `,
+  adviceUp:'The final card is upright, so its energy is already open to you. Work with it, not against it.',
+  adviceRev:'The final card is reversed, so something here needs a little care before it can flow.',
+  suitAdvice:{wands:'Take one small, bold step this week.',cups:'Be honest about how you feel, starting with yourself.',
+    swords:'Write your thoughts down before you decide, and say things kindly but clearly.',pentacles:'Pick one practical thing and do it steadily.',
+    none:'Step back and look at the bigger picture. What is this situation trying to teach you?'},
+  stage:{student:'Since you’re studying, read this in terms of school and what you want to learn next.',work:'Think about this in terms of your current job and the people you work with.',
+    own:'For your own project, think about what to build or change next.',rest:'While you’re taking a break, use this as a guide for what you want to return to.'},
+  rel:{single:'Since you’re single, this may be about how open you are to meeting someone new.',crush:'With someone on your mind, remember the cards are a mirror for you, not a way to read their mind.',
+    taken:'In your relationship, focus on how you two talk and show up for each other.',married:'For a long-term partnership, this is about the everyday rhythm you share.',
+    complicated:'Since it’s complicated, try to separate what you hope for from what’s actually happening.'},
+  mood:{great:'Ride that good energy!',worried:'Whatever the cards show, you still get to choose what happens next. Go gently.',down:'Be kind to yourself. One small step is enough for now.'}
+ },
+ zh:{
+  majorsMany:'這次出現很多大阿爾克那，代表這件事是人生中比較重要的轉折，不只是日常小事。',
+  majorOne:'抽到大阿爾克那，代表這件事背後有更重要的課題。',
+  suit:{wands:'權杖的能量最明顯，和行動、衝勁與熱情有關。',cups:'聖杯的能量最明顯，核心在於感受和人與人之間的關係。',
+        swords:'寶劍的能量最明顯，重點在想法、判斷和溝通方式，也可能伴隨一些壓力。',pentacles:'錢幣的能量最明顯，重點在實際層面：金錢、工作、身體和日常生活。'},
+  revMany:'逆位牌不少，代表有些能量目前卡住了，或是轉向內在。',
+  allUp:'所有牌都是正位，事情整體流動得還算順暢。',
+  courts:'出現好幾張宮廷牌，代表身邊的人在這件事裡很重要。',
+  ace:'出現了王牌，是新開始的訊號。',
+  first:(p,c,k)=>`先看「${p}」：${c}帶來${k}的能量。`,
+  mid:(p,c,k)=>`在「${p}」，${c}顯示出${k}。`,
+  last:(p,c,k)=>`最後是「${p}」：${c}指向${k}。`,
+  one:(c,k)=>`${c}帶來${k}的訊息。`,
+  revTag:'（逆位）',
+  arcUpDown:'一開始還算順，後面卻變得糾結，要留意事情正在往哪個方向走。',
+  arcDownUp:'一開始卡卡的，後面慢慢打開，是一條往好方向走的路。',
+  lens:t=>`放在${t}上看：`,
+  adviceUp:'最後一張牌是正位，這股能量已經在你身邊，順著它走就好。',
+  adviceRev:'最後一張牌是逆位，這裡有些地方需要先照顧好，事情才會順。',
+  suitAdvice:{wands:'這禮拜試著踏出一小步。',cups:'誠實面對自己的感受，先從對自己坦白開始。',
+    swords:'做決定前先把想法寫下來，說話時溫和但清楚。',pentacles:'挑一件實際的小事，穩穩地做下去。',
+    none:'退一步看整體：這件事想教你什麼？'},
+  stage:{student:'你正在讀書，可以把這裡的「事業」想成學業和接下來想學的東西。',work:'可以從目前的工作和同事關係來看這個結果。',
+    own:'對你自己的計畫來說，想想下一步要做或要改的是什麼。',rest:'你正在休息，可以把這當成之後要回到哪條路上的參考。'},
+  rel:{single:'你目前單身，這可能和你準備好認識新的人有多少有關。',crush:'心裡有喜歡的人時要記得，牌是照見你自己的鏡子，不是讀心術。',
+    taken:'在交往中，重點是你們怎麼溝通、怎麼陪伴彼此。',married:'對長久的伴侶關係來說，重點在於你們日常相處的節奏。',
+    complicated:'感情很複雜的時候，試著分清楚「希望的樣子」和「實際的狀況」。'},
+  mood:{great:'帶著這份好心情往前走吧！',worried:'不管牌怎麼說，接下來怎麼走還是由你決定。慢慢來。',down:'對自己溫柔一點，現在先踏出一小步就夠了。'}
+ }
+};
+function kwShort(p){
+  const parts = meaning(p)[0].split(LANG==='en'?', ':'、').slice(0,2);
+  return parts.join(LANG==='en'?', ':'、');
+}
+function nameTag(p){
+  const L = SUM[LANG];
+  const n = LANG==='en' ? cardName(p.card) : `「${cardName(p.card)}」`;
+  return n + (p.reversed ? L.revTag : '');
+}
+function localReading(){
+  const L = SUM[LANG], pos = positions(), P = S.picks, n = P.length;
+  const out = [];
+  // 1. overall theme
+  const theme = [];
+  const majors = P.filter(p=>p.card.major).length;
+  if(n===1 && majors===1) theme.push(L.majorOne);
+  else if(n>=3 && majors/n>=0.5) theme.push(L.majorsMany);
+  const counts = {}; P.forEach(p=>{ if(!p.card.major) counts[p.card.suit]=(counts[p.card.suit]||0)+1; });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  let domSuit = null;
+  if(sorted.length && (n===1 || (sorted[0][1]>=2 && (!sorted[1] || sorted[0][1]>sorted[1][1])))) domSuit = sorted[0][0];
+  if(domSuit) theme.push(L.suit[domSuit]);
+  const revs = P.filter(p=>p.reversed).length;
+  if(n>=3 && revs/n>0.5) theme.push(L.revMany);
+  else if(n>=3 && revs===0 && S.reversals) theme.push(L.allUp);
+  if(P.filter(p=>!p.card.major && p.card.idx>=10).length>=2) theme.push(L.courts);
+  if(P.some(p=>!p.card.major && p.card.idx===0)) theme.push(L.ace);
+  if(theme.length) out.push(theme.join(LANG==='en'?' ':''));
+  // 2. story
+  const idxs = S.spread==='celtic' ? [0,1,3,5,8,9] : P.map((_,i)=>i);
+  const story = [];
+  if(n===1){ story.push(L.one(nameTag(P[0]),kwShort(P[0])), meaning(P[0])[1]); }
+  else idxs.forEach((i,k)=>{
+    const f = k===0 ? L.first : (k===idxs.length-1 ? L.last : L.mid);
+    story.push(f(pos[i],nameTag(P[i]),kwShort(P[i])), meaning(P[i])[1]);
+  });
+  if(n>=3){
+    const a = P[0].reversed, b = P[n-1].reversed;
+    if(!a && b) story.push(L.arcUpDown); else if(a && !b) story.push(L.arcDownUp);
+  }
+  out.push(story.join(LANG==='en'?' ':''));
+  // 3. topic lens
+  const key = P[n-1];
+  if(S.topic!=='general'){
+    let lens = L.lens(TOPICS[S.topic][LANG].name) + topicLine(key.card,key.reversed,S.topic);
+    if(S.topic==='career' && S.profile.stage) lens += (LANG==='en'?' ':'') + L.stage[S.profile.stage];
+    if(S.topic==='love' && S.profile.rel) lens += (LANG==='en'?' ':'') + L.rel[S.profile.rel];
+    out.push(lens);
+  }
+  // 4. advice
+  const adv = [key.reversed ? L.adviceRev : L.adviceUp, L.suitAdvice[domSuit||'none']];
+  if(S.profile.mood && L.mood[S.profile.mood]) adv.push(L.mood[S.profile.mood]);
+  out.push(adv.join(LANG==='en'?' ':''));
+  return out;
+}
+function renderSummary(){
+  const box = $('sumBox');
+  if(!S.picks.length || !allFlipped()){ box.hidden = true; return; }
+  const out = $('sumOut'); out.innerHTML='';
+  localReading().forEach(par=>{ const p=document.createElement('p'); p.textContent=par; out.appendChild(p); });
+  box.hidden = false;
+}
+
+/* ---------- Copy ---------- */
+function readingText(){
+  const sp = SPREADS[S.spread], pos = positions(), L = t();
+  const colon = LANG==='en'?': ':'：';
+  const lines = [`${L.copyTitle}${LANG==='en'?' | ':'｜'}${S.name||''}`.replace(/[｜|]\s*$/,'').trim(),
+                 `${L.copyTopic}${colon}${TOPICS[S.topic][LANG].name}`];
+  const tags=['age','stage','rel','mood'].filter(k=>S.profile[k]).map(k=>optLabel(k,S.profile[k],LANG));
+  if(tags.length) lines.push(tags.join(LANG==='en'?', ':'、'));
+  if(S.question) lines.push(L.qPrefix+S.question);
+  lines.push(L.spreadPrefix+sp[LANG].name,'');
+  S.picks.forEach((p,i)=>{
+    if(!S.flipped.has(i)) return;
+    const m = meaning(p);
+    lines.push(`${i+1}. ${pos[i]}${colon}${cardName(p.card)} (${p.reversed?L.rev:L.up})`,`   ${m[0]}`,`   ${m[1]}`);
+    const tl = topicLine(p.card,p.reversed,S.topic); if(tl) lines.push(`   ${L.topicPrefix(TOPICS[S.topic][LANG].name)}${tl}`);
+  });
+  if(allFlipped()) lines.push('',`[${L.copyAI}]`,localReading().join('\n\n'));
+  if(S.topic==='health') lines.push('','* '+L.healthNote);
+  return lines.join('\n');
+}
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2200)}
+$('copyBtn').addEventListener('click',async()=>{
+  if(!S.flipped.size){toast(t().flipFirst);return}
+  const text = readingText();
+  try{ await navigator.clipboard.writeText(text); toast(t().copied); }
+  catch{
+    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    let ok=false; try{ok=document.execCommand('copy')}catch{}
+    ta.remove(); toast(ok?t().copied:t().copyFail);
+  }
+});
+$('againBtn').addEventListener('click',startIntro);
+$('home').addEventListener('click',startIntro);
+
+applyLang();
+show('intro');
+</script>
+</body>
+</html>
